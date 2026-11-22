@@ -1,0 +1,48 @@
+{
+  "name": "@garag0l/turkmen-num2words",
+  "version": "0.1.1",
+  "description": "Spell out integers in Turkmen (modern Latin) cardinal words. Zero dependencies.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "bin": {
+    "tm-num": "bin/tm-num.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "turkmen",
+    "turkmenistan",
+    "numbers",
+    "number-to-words",
+    "num2words",
+    "cardinal",
+    "nlp"
+  ],
+  "author": "Murat Bekgi",
+  "license": "MIT",
+  "homepage": "https://github.com/garag0l/turkmen-num2words#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/garag0l/turkmen-num2words.git",
+    "directory": "js"
+  },
+  "bugs": {
+    "url": "https://github.com/garag0l/turkmen-num2words/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -5,11 +5,13 @@
 [![CI](https://github.com/garag0l/turkmen-num2words/actions/workflows/ci.yml/badge.svg)](https://github.com/garag0l/turkmen-num2words/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
+![Node 18+](https://img.shields.io/badge/node-18%2B-blue)
 ![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
 
 A zero-dependency library and CLI that converts integers into Turkmen
 cardinal-number words, in the modern Latin alphabet. Useful for text-to-speech,
-language learning, receipts and invoices, and spelling out amounts.
+language learning, receipts and invoices, and spelling out amounts. Available
+for both **Python** and **JavaScript/TypeScript**.
 
 ```console
 $ tm-num 1352647
@@ -62,6 +64,26 @@ tm-num 7 42 100              # several (one line each)
 echo "99 100" | tm-num       # from stdin
 ```
 
+### JavaScript / TypeScript
+
+The npm package [`@garag0l/turkmen-num2words`](https://www.npmjs.com/package/@garag0l/turkmen-num2words)
+(in [`js/`](js/)) shares the same rules and test values.
+
+```bash
+npm install @garag0l/turkmen-num2words
+```
+
+```js
+import { numberToTurkmen } from "@garag0l/turkmen-num2words";
+
+numberToTurkmen(1234); // "müň iki ýüz otuz dört"
+numberToTurkmen(-5); // "minus bäş"
+```
+
+```bash
+npx tm-num 1234              # müň iki ýüz otuz dört
+```
+
 ## Range
 
 Supports `-(10¹²) < n < 10¹²`. Values at or beyond 10¹² raise `ValueError`,
@@ -79,7 +101,6 @@ refuses to guess rather than print something wrong.
 ## Roadmap
 
 - Ordinals (`birinji`, `ikinji`, …) with correct vowel harmony.
-- A JavaScript/TypeScript port sharing the same rules.
 - Pairs well with [turkmen-translit](https://github.com/garag0l/turkmen-translit)
   for full Turkmen text handling.
 

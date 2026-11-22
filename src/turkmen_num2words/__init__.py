@@ -10,4 +10,4 @@ from __future__ import annotations
 from .numbers import number_to_turkmen
 
 __all__ = ["__version__", "number_to_turkmen"]
-__version__ = "0.1.0"
+__version__ = "0.1.1"
