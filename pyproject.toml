@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "turkmen-num2words"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Convert integers to Turkmen (Latin) cardinal-number words."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -31,6 +31,9 @@ tm-num = "turkmen_num2words.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
+
+[tool.hatch.version]
+path = "src/turkmen_num2words/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/turkmen_num2words"]
