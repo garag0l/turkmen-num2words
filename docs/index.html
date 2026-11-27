@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Türkmen Number Speller</title>
+<meta name="description" content="Spell out any integer in Turkmen (modern Latin) cardinal words, in your browser. No install.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #f3f5f2; --surface: #ffffff; --fg: #15201b; --muted: #5d6b63;
+    --faint: #e4e9e4; --line: #d4dcd5; --accent: #1f8a5b; --accent-weak: #e6f3ec;
+    --accent-ink: #0f5f3c; --danger: #b4431f;
+    --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10140f; --surface: #192017; --fg: #e7ede6; --muted: #97a699;
+      --faint: #222a20; --line: #2d3729; --accent: #3fb47c; --accent-weak: #16271d;
+      --accent-ink: #8fe0b4; --danger: #e98a63; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10140f; --surface: #192017; --fg: #e7ede6; --muted: #97a699;
+    --faint: #222a20; --line: #2d3729; --accent: #3fb47c; --accent-weak: #16271d;
+    --accent-ink: #8fe0b4; --danger: #e98a63; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); line-height: 1.5; }
+  .wrap {
+    max-width: 44rem; margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 2.5rem 3.5rem;
+  }
+  header { margin-bottom: 1.75rem; }
+  .brandline { display: inline-flex; align-items: center; gap: .5rem; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); font-weight: 600; }
+  .dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent); }
+  h1 { font-family: var(--font-display); font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.05; letter-spacing: -.02em; margin: .5rem 0 .4rem; text-wrap: balance; }
+  .sub { color: var(--muted); font-size: 1rem; max-width: 34rem; margin: 0; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-top: 1.5rem; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .7rem .95rem; border-bottom: 1px solid var(--line); background: var(--faint); }
+  .plabel { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .badge { font-size: .68rem; font-weight: 600; letter-spacing: .04em; padding: .2rem .5rem; border-radius: 999px; background: var(--accent-weak); color: var(--accent-ink); }
+  input.num {
+    width: 100%; border: 0; background: transparent; color: var(--fg);
+    font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 7vw, 2.4rem);
+    padding: 1rem .95rem; letter-spacing: .01em; font-variant-numeric: tabular-nums;
+  }
+  input.num:focus-visible { outline: none; }
+  input.num::placeholder { color: var(--muted); font-weight: 500; }
+  .grouped { padding: 0 .95rem .85rem; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; min-height: 1.1rem; }
+  .output { padding: 1.1rem .95rem; font-size: 1.35rem; line-height: 1.45; min-height: 4.5rem; word-break: break-word; }
+  .output.empty { color: var(--muted); font-size: 1.05rem; }
+  .output.error { color: var(--danger); font-size: 1.02rem; }
+  .pfoot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; padding: .6rem .95rem; border-top: 1px solid var(--line); }
+  .count { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .copy { appearance: none; cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: .85rem; color: #fff; background: var(--accent); border: 0; border-radius: 9px; padding: .5rem .95rem; }
+  .copy:disabled { opacity: .5; cursor: default; }
+  .copy:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .examples { margin: 1.5rem 0 0; }
+  .examples .plabel { display: block; margin-bottom: .55rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .chip { appearance: none; cursor: pointer; text-align: left; font-family: var(--font-body); font-size: .9rem; font-weight: 600; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; padding: .45rem .75rem; max-width: 100%; font-variant-numeric: tabular-nums; }
+  .chip:hover { border-color: var(--accent); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip span { color: var(--muted); font-weight: 400; }
+  .note { margin-top: 1.75rem; border-top: 1px solid var(--line); padding-top: 1.25rem; color: var(--muted); font-size: .9rem; }
+  .note b { color: var(--fg); font-family: var(--font-display); }
+  .worked { margin-top: .6rem; padding: .7rem .85rem; background: var(--faint); border-radius: 10px; font-size: .9rem; }
+  .worked code { color: var(--accent-ink); font-weight: 600; }
+  footer { margin-top: 2.25rem; color: var(--muted); font-size: .82rem; }
+  footer a { color: var(--accent-ink); text-decoration: none; font-weight: 600; }
+  footer a:hover { text-decoration: underline; }
+  .warn { margin-top: 1rem; padding: .7rem .85rem; border-radius: 10px; background: var(--accent-weak); color: var(--accent-ink); font-size: .85rem; display: none; }
+  .toast { position: fixed; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(1rem); background: var(--fg); color: var(--bg); font-size: .85rem; font-weight: 600; padding: .55rem .9rem; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 20; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="brandline"><span class="dot"></span>Türkmen dili · open tool</span>
+    <h1>Türkmen Number Speller</h1>
+    <p class="sub">Spell out any whole number in <strong>Turkmen</strong> cardinal words (modern Latin). Runs entirely in your browser — nothing is uploaded.</p>
+  </header>
+
+  <div class="panel">
+    <div class="phead">
+      <span class="plabel">Number</span>
+      <span class="badge">0 – 999,999,999,999</span>
+    </div>
+    <input class="num" id="input" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="1352647">
+    <div class="grouped" id="grouped"></div>
+    <div class="phead" style="border-top:1px solid var(--line)">
+      <span class="plabel">In Turkmen</span>
+    </div>
+    <div class="output empty" id="output" aria-live="polite">Type a number to see it spelled out.</div>
+    <div class="pfoot">
+      <span class="count"><span id="wordcount">0</span> words</span>
+      <button class="copy" id="copy" type="button" disabled>Copy words</button>
+    </div>
+  </div>
+
+  <div class="warn" id="warn"></div>
+
+  <div class="examples">
+    <span class="plabel">Try an example</span>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="note">
+    <b>How it reads.</b> A multiplier comes before its scale word (<code>iki ýüz</code> = 200,
+    <code>üç müň</code> = 3,000). <code>ýüz</code> (100) and <code>müň</code> (1,000) drop the
+    “bir” at one, while the borrowed <code>million</code> and <code>milliard</code> keep it.
+    <div class="worked">
+      Worked example from R. Gray’s grammar: <code>1,352,647</code> →
+      <code>bir million üç ýüz elli iki müň alty ýüz kyrk ýedi</code>.
+    </div>
+  </div>
+
+  <footer>
+    Powered by <a href="https://github.com/garag0l/turkmen-num2words" target="_blank" rel="noopener">turkmen-num2words</a>,
+    an open-source library by Murat Bekgi (MIT). Grounded in Wiktionary’s Turkmen numerals and
+    R. Gray’s <i>A Short Descriptive Grammar of Turkmen</i> (SIL).
+  </footer>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script type="module">
+  const $ = (id) => document.getElementById(id);
+  const input = $("input"), output = $("output"), grouped = $("grouped");
+  const warn = $("warn"), copyBtn = $("copy"), toast = $("toast");
+  let lib = null;
+
+  const EXAMPLES = [
+    { n: "0", note: "nol" },
+    { n: "42", note: "two digits" },
+    { n: "1352647", note: "the worked example" },
+    { n: "1000000", note: "keeps “bir”" },
+    { n: "-17", note: "negative" },
+    { n: "999999999999", note: "the maximum" },
+  ];
+
+  try {
+    lib = await import("https://cdn.jsdelivr.net/npm/@garag0l/turkmen-num2words@0.1.1/+esm");
+  } catch (e) {
+    warn.textContent = "Couldn't load the number library (you may be offline). The page needs a network connection the first time.";
+    warn.style.display = "block";
+  }
+
+  function setState(cls, text) {
+    output.className = "output" + (cls ? " " + cls : "");
+    output.textContent = text;
+  }
+
+  function render() {
+    const raw = input.value.trim();
+    // Allow thousands separators for convenience.
+    const cleaned = raw.replace(/[\s,_]/g, "");
+    grouped.textContent = "";
+    $("wordcount").textContent = "0";
+    copyBtn.disabled = true;
+
+    if (!raw) { setState("empty", "Type a number to see it spelled out."); return; }
+    if (!/^-?\d+$/.test(cleaned)) { setState("error", "Whole numbers only — digits, with an optional leading minus."); return; }
+
+    const n = Number(cleaned);
+    if (!Number.isSafeInteger(n)) { setState("error", "That number is too large to spell exactly."); return; }
+    grouped.textContent = n.toLocaleString("en-US");
+
+    if (!lib) return;
+    try {
+      const words = lib.numberToTurkmen(n);
+      setState("", words);
+      $("wordcount").textContent = words.split(/\s+/).filter(Boolean).length;
+      copyBtn.disabled = false;
+    } catch (err) {
+      setState("error", err && err.message ? "Out of range — supported range is 0 to 999,999,999,999." : "Couldn't convert that number.");
+    }
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove("show"), 1400);
+  }
+
+  input.addEventListener("input", render);
+  copyBtn.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(output.textContent); showToast("Copied"); }
+    catch (e) {
+      const r = document.createRange(); r.selectNodeContents(output);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      showToast("Select ⌘/Ctrl+C to copy");
+    }
+  });
+
+  const chips = $("chips");
+  for (const ex of EXAMPLES) {
+    const b = document.createElement("button");
+    b.className = "chip"; b.type = "button";
+    b.innerHTML = Number(ex.n).toLocaleString("en-US") + " <span>· " + ex.note + "</span>";
+    b.addEventListener("click", () => { input.value = ex.n; render(); input.focus(); });
+    chips.appendChild(b);
+  }
+
+  render();
+</script>
+</body>
+</html>
