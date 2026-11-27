@@ -7,6 +7,9 @@
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![Node 18+](https://img.shields.io/badge/node-18%2B-blue)
 ![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
+[![Web UI](https://img.shields.io/badge/Web_UI-try_in_browser-1f8a5b)](https://garag0l.github.io/turkmen-num2words/)
+
+> 🌐 **No install needed** — [use it in your browser](https://garag0l.github.io/turkmen-num2words/): type a number, see it spelled out in Turkmen, copy the words.
 
 A zero-dependency library and CLI that converts integers into Turkmen
 cardinal-number words, in the modern Latin alphabet. Useful for text-to-speech,
